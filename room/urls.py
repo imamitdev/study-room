@@ -5,5 +5,5 @@ from . import views
 urlpatterns = [
     # render index.html on /
     path("", views.home, name="home"),
-    path("admin/", admin.site.urls),
+    path("create-room/", views.createRoom, name="create-room"),
 ]
