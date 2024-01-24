@@ -33,9 +33,9 @@
 
       {% if request.user.is_authenticated %}
       <div class="header__user">
-        <a href="profile.html">
+        <a href="{% url 'user-profile' user.username %}">
           <div class="avatar avatar--medium active">
-            <img src="https://randomuser.me/api/portraits/men/37.jpg" />
+            <img src="{{ user.avatar.url }}" />
           </div>
           <p>{{request.user.name}} <span>@{{request.user.username}}</span></p>
         </a>
@@ -56,6 +56,7 @@
       <!-- Not Logged In -->
       <a href="{% url 'login' %}">
         <img src="{% static '/assets/avatar.svg' %}" />
+
         <p>Login</p>
       </a>
 
@@ -64,7 +65,7 @@
       {% endif %}
 
       <div class="dropdown-menu">
-        <a href="{% url 'user-profile' %}" class="dropdown-link"
+        <a href="{% url 'update-profile' %}" class="dropdown-link"
           ><svg
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"

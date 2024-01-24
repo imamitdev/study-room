@@ -1,49 +1,65 @@
 {% extends 'index.html' %}
 
 {% block content %}
-  <main class="layout layout--3">
+  <main class="profile-page layout layout--3">
     <div class="container">
       <!-- Topics Start -->
-
-      {% include 'topics.html' %}
-
+      <div class="topics">
+        <div class="topics__header">
+          <h2>Browse Topics</h2>
+        </div>
+        <ul class="topics__list">
+          <li>
+            <a href="/" class="active">All <span>{{ topics.count }}</span></a>
+          </li>
+          {% for topic in topics %}
+            <li>
+              <a href="{% url 'home' %}?q={{ topic.name }} ">{{ topic.name }} <span>{{ topic.room_set.all.count }}</span></a>
+            </li>
+          {% endfor %}
+        </ul>
+        <button class="btn btn--link" href="/">
+          More<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+            <title>chevron-down</title>
+            <path d="M16 21l-13-13h-3l16 16 16-16h-3l-13 13z"></path>
+          </svg>
+        </button>
+      </div>
       <!-- Topics End -->
 
       <!-- Room List Start -->
       <div class="roomList">
-        <div class="mobile-menu">
-          <form class="header__search">
-            <label>
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                <title>search</title>
-                <path d="M32 30.586l-10.845-10.845c1.771-2.092 2.845-4.791 2.845-7.741 0-6.617-5.383-12-12-12s-12 5.383-12 12c0 6.617 5.383 12 12 12 2.949 0 5.649-1.074 7.741-2.845l10.845 10.845 1.414-1.414zM12 22c-5.514 0-10-4.486-10-10s4.486-10 10-10c5.514 0 10 4.486 10 10s-4.486 10-10 10z"></path>
-              </svg>
-              <input placeholder="Search for posts" />
-            </label>
-          </form>
-          <div class="mobile-menuItems">
-            <a class="btn btn--main btn--pill" href="#">Browse Topics</a>
-            <a class="btn btn--main btn--pill" href="#">Recent Activities</a>
+        <div class="profile">
+          <div class="profile__avatar">
+            <div class="avatar avatar--large active">
+              <img src="{{ user.avatar.url }}" />
+            </div>
+          </div>
+          <div class="profile__info">
+            <h3>{{ user.name }}</h3>
+            <p>@{{ user.username }}</p>
+
+            {% if request.user == user %}
+              <a href="{% url 'update-profile' %}" class="btn btn--main btn--pill">Edit Profile</a>
+            {% endif %}
+          </div>
+          <div class="profile__about">
+            <h3>About</h3>
+            <p>{{ user.bio }}</p>
           </div>
         </div>
+
         <div class="roomList__header">
           <div>
-            <h2>Study Room</h2>
-            <p>{{ rooms.count }} Rooms available</p>
+            <h2>Study Rooms Hosted by {{ user.name }}</h2>
           </div>
-          <a class="btn btn--main" href="{% url 'create-room' %}">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <title>add</title>
-              <path d="M16.943 0.943h-1.885v14.115h-14.115v1.885h14.115v14.115h1.885v-14.115h14.115v-1.885h-14.115v-14.115z"></path>
-            </svg>Create Room
-          </a>
         </div>
 
         {% for room in rooms %}
           <div class="roomListRoom">
             <div class="roomListRoom__header">
               <a href="{% url 'user-profile' room.host.username %}" class="roomListRoom__author">
-                <div class="avatar avatar--small">
+                <div class="avatar avatar--small active">
                   <img src="{{ room.host.avatar.url }}" />
                 </div>
                 <span>@{{ room.host.username }}</span>
@@ -57,7 +73,7 @@
               <p>{{ room.description }}</p>
             </div>
             <div class="roomListRoom__meta">
-              <a href="{% url 'room' room.id %}" class="roomListRoom__joined">
+              <a class="roomListRoom__joined">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                   <title>user-group</title>
                   <path d="M30.539 20.766c-2.69-1.547-5.75-2.427-8.92-2.662 0.649 0.291 1.303 0.575 1.918 0.928 0.715 0.412 1.288 1.005 1.71 1.694 1.507 0.419 2.956 1.003 4.298 1.774 0.281 0.162 0.456 0.487 0.456 0.85v4.65h-4v2h5c0.553 0 1-0.447 1-1v-5.65c0-1.077-0.56-2.067-1.461-2.584z"></path>
@@ -82,7 +98,7 @@
           <div class="activities__boxHeader roomListRoom__header">
             <a href="profile.html" class="roomListRoom__author">
               <div class="avatar avatar--small">
-                <img src="https://randomuser.me/api/portraits/women/11.jpg" />
+                <img src="{{ user.avatar.url }}" />
               </div>
               <p>
                 @sulamita_ivy
@@ -92,8 +108,8 @@
             <div class="roomListRoom__actions">
               <a href="#">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                  <title>remove</title>
-                  <path d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"></path>
+                  <title>delete</title>
+                  <path d="M30 4h-8v-3c0-0.553-0.447-1-1-1h-10c-0.553 0-1 0.447-1 1v3h-8v2h2v24c0 1.104 0.897 2 2 2h20c1.103 0 2-0.896 2-2v-24h2v-2h-0zM12 2h8v2h-8v-2zM26.002 30l-0.002 1v-1h-20v-24h20v24h0.002z"></path>
                 </svg>
               </a>
             </div>
@@ -120,8 +136,8 @@
             <div class="roomListRoom__actions">
               <a href="#">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                  <title>remove</title>
-                  <path d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"></path>
+                  <title>delete</title>
+                  <path d="M30 4h-8v-3c0-0.553-0.447-1-1-1h-10c-0.553 0-1 0.447-1 1v3h-8v2h2v24c0 1.104 0.897 2 2 2h20c1.103 0 2-0.896 2-2v-24h2v-2h-0zM12 2h8v2h-8v-2zM26.002 30l-0.002 1v-1h-20v-24h20v24h0.002z"></path>
                 </svg>
               </a>
             </div>

@@ -4,6 +4,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
+from .models import User
+from room.models import Topic
 
 
 def register(request):
@@ -17,19 +19,6 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, "login_register.html", {"form": form})
-
-
-@login_required(login_url="login")
-def profile_edit(request):
-    if request.method == "POST":
-        form = CustomUserChangeForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect("user-profile")
-    else:
-        form = CustomUserChangeForm(instance=request.user)
-    return render(request, "profile-edit.html", {"form": form})
 
 
 def user_login(request):
@@ -56,3 +45,30 @@ def user_logout(request):
     auth.logout(request)
     messages.success(request, "You are Logged out")
     return redirect("login")
+
+
+@login_required(login_url="login")
+def profile_edit(request):
+    if request.method == "POST":
+        form = CustomUserChangeForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("home")
+    else:
+        form = CustomUserChangeForm(instance=request.user)
+    return render(request, "profile-edit.html", {"form": form})
+
+
+def user_profile(request, username):
+    user = User.objects.get(username=username)
+    rooms = user.room_set.all()
+    room_messages = user.message_set.all()
+    topics = Topic.objects.all()
+    context = {
+        "user": user,
+        "rooms": rooms,
+        "room_messages": room_messages,
+        "topics": topics,
+    }
+    return render(request, "profile.html", context)

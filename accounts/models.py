@@ -33,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=200, unique=True)
     name = models.CharField(max_length=200, null=True)
     bio = models.TextField(null=True)
-    avatar = models.ImageField(null=True, default="avatar.svg")
+    avatar = models.ImageField(null=True, default="avatar.svg", upload_to="profile")
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
