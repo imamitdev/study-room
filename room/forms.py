@@ -1,12 +1,5 @@
 from django.forms import ModelForm
-from django.contrib.auth.forms import UserCreationForm
-from .models import Room, User
-
-
-class MyUserCreationForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ["name", "username", "email", "password1", "password2"]
+from .models import Room
 
 
 class RoomForm(ModelForm):
@@ -21,9 +14,3 @@ class RoomForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(RoomForm, self).__init__(*args, **kwargs)
         # You can customize the form fields or add additional validation here if needed.
-
-
-class UserForm(ModelForm):
-    class Meta:
-        model = User
-        fields = ["avatar", "name", "username", "email", "bio"]

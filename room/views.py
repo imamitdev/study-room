@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from .models import Room, Topic, Message
 from django.db.models import Q
 from .forms import RoomForm
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -15,6 +16,7 @@ def home(request):
     return render(request, "home.html", context)
 
 
+@login_required(login_url="login")
 def createRoom(request):
     if request.method == "POST":
         # Get the Topic instance based on the value from the request
@@ -33,6 +35,7 @@ def createRoom(request):
     return render(request, "room/create-room.html", {"form": form})
 
 
+@login_required(login_url="login")
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
 
@@ -55,6 +58,7 @@ def updateRoom(request, pk):
     return render(request, "room/create-room.html", context)
 
 
+@login_required(login_url="login")
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
     if request.user != room.host:
