@@ -11,8 +11,14 @@ def home(request):
     rooms = Room.objects.filter(
         Q(topic__name__icontains=q) | Q(name__icontains=q) | Q(description__icontains=q)
     )
+    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))[0:3]
     topics = Topic.objects.all()[0:5]
-    context = {"rooms": rooms, "topics": topics}
+
+    context = {
+        "rooms": rooms,
+        "topics": topics,
+        "room_messages": room_messages,
+    }
     return render(request, "home.html", context)
 
 
@@ -67,7 +73,7 @@ def deleteRoom(request, pk):
     if request.method == "POST":
         room.delete()
         return redirect("home")
-    context = {"room": room}
+    context = {"obj": room}
 
     return render(request, "room/delete.html", context)
 
@@ -90,3 +96,25 @@ def room(request, room_id):
         "participants": participants,
     }
     return render(request, "room/room.html", context)
+
+
+@login_required(login_url="login")
+def deleteMessage(request, pk):
+    message = Message.objects.get(id=pk)
+    if request.user != message.user:
+        return HttpResponse("You are not allowed here!!")
+
+    if request.method == "POST":
+        message.delete()
+        return redirect("home")
+    context = {"obj": message}
+    return render(request, "room/delete.html", context)
+
+
+def topics(request):
+    q = request.GET.get("q") if request.GET.get("q") != None else ""
+    topics = Topic.objects.filter(Q(name__icontains=q))
+    context = {
+        "topics": topics,
+    }
+    return render(request, "room/topics.html", context)
